@@ -22,5 +22,5 @@ app.use("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log("Listening on PORT:" + PORT);
+  console.log("Listening on PORT:" + PORT + " http://localhost:3000/api");
 });

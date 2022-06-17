@@ -10,3 +10,11 @@
     ```
 4. visit http://localhost:3000/api
 
+# Features
+- [x] Ongoing Episodes
+- [ ] Anime / Movie details
+- [ ] Anime List All
+- [ ] Anime List By Genre
+- [ ] Movie List
+- [ ] Movie List By Genre
+- [ ] Search Anime / Movie
