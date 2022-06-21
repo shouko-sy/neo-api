@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const cheerio = require("cheerio");
 const replaceAnimePage = "https://neonime.watch/episode/";
+const replaceMoviePage = "https://neonime.watch/";
 const AxiosService = require("../helpers/axiosService");
 
 // new anime list pagination  -------Done------
@@ -106,6 +107,54 @@ router.get("/episode/:endpoint", async (req, res) => {
       status: false,
       message: err,
       obj: {},
+    });
+  }
+});
+
+// Movie list pagination  -------Done------
+router.get("/movies/page/:pagenumber/", async (req, res) => {
+  let pagenumber = req.params.pagenumber;
+  let url =
+    pagenumber === "1"
+      ? "https://neonime.watch/movies/"
+      : `https://neonime.watch/movies/page/${pagenumber}/`;
+
+  try {
+    const response = await AxiosService(url);
+    console.log(url);
+    if (response.status === 200) {
+      const $ = cheerio.load(response.data);
+      const element = $(".peliculas");
+      let movie_list = [];
+      let title, detailLink, endpoint, thumb;
+
+      element.find(".items > .item").each((idx, el) => {
+        title = $(el).find(".fixyear > .judul-anime-movie > h2").text().trim();
+        detailLink = $(el).find("a").attr("href");
+        endpoint = $(el).find("a").attr("href").replace(replaceMoviePage, "");
+        thumb = $(el).find("a").find("img").attr("data-src");
+        movie_list.push({
+          title,
+          detailLink,
+          thumb,
+          endpoint,
+        });
+      });
+      return res.status(200).json({
+        status: true,
+        message: "success",
+        movie_list,
+      });
+    }
+    return res.send({
+      message: response.status,
+      movie_list: [],
+    });
+  } catch (err) {
+    res.send({
+      status: false,
+      message: err,
+      movie_list: [],
     });
   }
 });
