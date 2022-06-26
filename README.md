@@ -14,7 +14,7 @@
 - [x] Ongoing Episodes
 - [x] Anime Episode Details
 - [x] Movie List
-- [ ] Movie Details
+- [x] Movie Details
 - [ ] Anime List All
 - [ ] Anime List By Genre
 - [ ] Movie List By Genre

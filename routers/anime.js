@@ -51,7 +51,7 @@ router.get("/episode/page/:pagenumber/", async (req, res) => {
     });
   }
 });
-
+ 
 // detail anime page -------Done------
 router.get("/episode/:endpoint", async (req, res) => {
   const endpoint = req.params.endpoint;
@@ -88,7 +88,7 @@ router.get("/episode/:endpoint", async (req, res) => {
       });
 
       re = new RegExp("-", 'g');
-      obj.title = endpoint.replace(re, " ");
+      meta.title = endpoint.replace(re, " ");
       obj.meta = meta;
       obj.list_link = list_link;
 
@@ -155,6 +155,65 @@ router.get("/movies/page/:pagenumber/", async (req, res) => {
       status: false,
       message: err,
       movie_list: [],
+    });
+  }
+});
+
+// detail movie page -------Done------
+router.get("/:endpoint", async (req, res) => {
+  const endpoint = req.params.endpoint;
+  console.log(endpoint);
+  try {
+    const response = await AxiosService(`/${endpoint}`);
+    if (response.status === 200) {
+      const $ = cheerio.load(response.data);
+      const elementA = $("#uwee");
+      const elementB = $(".s_left > div:nth-child(3)").first();
+      const elementC = $(".s_left > div:nth-child(6) > div:last-child");
+      const obj = {};
+      const list_link = [];
+      const meta = {};
+
+      let re = new RegExp(",", 'g');
+      meta.title = elementA.find(".data > h1").text().trim();
+      meta.thumb = elementA.find("img").attr("data-src");
+      meta.type = elementA.find(".calidad2").text().trim();
+      meta.releaseDate = elementA.find(".titulo_o > i:last-child").text().trim();
+      meta.rating = `${elementA.find(".dato > a").text()} ${elementA.find(".dato > b:nth-child(2)").text()}${elementA.find(".dato > b:nth-child(3)").text()}`;
+      meta.genre = elementA.find(".data > p:last-child").text().trim();
+      meta.desc = elementB.find("p").text().trim();
+
+      elementC.find("ul:only-child > ul").each((idx, el) => {
+        const label = $(el).find("li > label").text().trim();
+        const type = label.toUpperCase().includes("MKV") ? "MKV" : "MP4";
+        $(el).find("li > a").each((idx, el) => {
+          list_link.push({
+            type,
+            label,
+            name: $(el).text().trim(),
+            link: $(el).attr("href"),
+          });
+        });
+      });
+
+      obj.meta = meta;
+      obj.list_link = list_link;
+
+      return res.status(200).json({
+        status: true,
+        message: "success",
+        obj,
+      });
+    }
+    return res.send({
+      message: response.status,
+      obj: {},
+    });
+  } catch (err) {
+    res.send({
+      status: false,
+      message: err,
+      obj: {},
     });
   }
 });
