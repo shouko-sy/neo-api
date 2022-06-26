@@ -173,15 +173,19 @@ router.get("/:endpoint", async (req, res) => {
       const obj = {};
       const list_link = [];
       const meta = {};
+      let genre = [];
 
-      let re = new RegExp(",", 'g');
       meta.title = elementA.find(".data > h1").text().trim();
       meta.thumb = elementA.find("img").attr("data-src");
       meta.type = elementA.find(".calidad2").text().trim();
       meta.releaseDate = elementA.find(".titulo_o > i:last-child").text().trim();
       meta.rating = `${elementA.find(".dato > a").text()} ${elementA.find(".dato > b:nth-child(2)").text()}${elementA.find(".dato > b:nth-child(3)").text()}`;
-      meta.genre = elementA.find(".data > p:last-child").text().trim();
+      elementA.find(".data > p:last-child > a").each((idx, el) => {
+        genre.push($(el).text().trim());
+      });
+      meta.genre = genre;
       meta.desc = elementB.find("p").text().trim();
+
 
       elementC.find("ul:only-child > ul").each((idx, el) => {
         const label = $(el).find("li > label").text().trim();
